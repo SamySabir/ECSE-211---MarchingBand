@@ -1,6 +1,7 @@
 import brickpi3
 import time
 
+
 class Drum:
     
     def __init__(self, BP,port, rotation_angle, motor_speed=300,invert_rotation=False, starting_position="up",delay=1):
@@ -66,7 +67,21 @@ class Drum:
         BP.reset_all()
         time.sleep(self.delay)           
   
-  
+
+def drummer():
+    print("start drummer")
+    #BP = brickpi3.BrickPi3()
+    drum = Drum(BP,"A", 15, starting_position="down",motor_speed=720,delay=0.1)
+    while True:
+        print(3)
+        drum.move(BP)
+        drum.move(BP)
+        time.sleep(10)
+        
+
+
+
+
 def main():
     print("main")
     BP = brickpi3.BrickPi3()

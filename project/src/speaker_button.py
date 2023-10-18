@@ -43,30 +43,35 @@ def play_note_4():
     NOTE_4.wait_done()
 
 
+#our work
+def flute():
+    while True:
+        print("hlle")
+        play_sound_on_button_press()
+        time.sleep(0.1)
+        
+
 def play_sound_on_button_press():
     "In an infinite loop, play a single note when the touch sensor is pressed."
-    try:
+    state1 = False
+    state2 = False
+    state3 = False
+    print("flute")
+    for i in range(100):
+        state1 += TOUCH_SENSOR_1.is_pressed()
+        state2 += TOUCH_SENSOR_2.is_pressed()
+        state3 += TOUCH_SENSOR_3.is_pressed()
+    
+    if (state1 and state2):
+        play_note_4()
+    elif state1:
+        play_note_1()
+    elif state2:
+        play_note_2()
+    elif state3:
+        play_note_3()
             
-            state1 = False
-            state2 = False
-            state3 = False
-            
-            for i in range(100):
-                state1 += TOUCH_SENSOR_1.is_pressed()
-                state2 += TOUCH_SENSOR_2.is_pressed()
-                state3 += TOUCH_SENSOR_3.is_pressed()
-            
-            if (state1 and state2):
-                play_note_4()
-            elif state1:
-                play_note_1()
-            elif state2:
-                play_note_2()
-            elif state3:
-                play_note_3()
-            
-    except BaseException:  # capture all exceptions including KeyboardInterrupt (Ctrl-C)
-        exit()
+
 
 
 if __name__=='__main__':

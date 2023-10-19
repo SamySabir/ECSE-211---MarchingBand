@@ -44,14 +44,14 @@ def play_note_4():
 
 
 #our work
-def flute():
+def flute(event, activated):
     while True:
         print("hlle")
-        play_sound_on_button_press()
+        play_sound_on_button_press(event, activated)
         time.sleep(0.1)
         
 
-def play_sound_on_button_press():
+def play_sound_on_button_press(event, activated):
     "In an infinite loop, play a single note when the touch sensor is pressed."
     state1 = False
     state2 = False
@@ -61,6 +61,10 @@ def play_sound_on_button_press():
         state1 += TOUCH_SENSOR_1.is_pressed()
         state2 += TOUCH_SENSOR_2.is_pressed()
         state3 += TOUCH_SENSOR_3.is_pressed()
+    
+    if state1 or state2 or state3:
+        activated = True
+        event.set()
     
     if (state1 and state2):
         play_note_4()

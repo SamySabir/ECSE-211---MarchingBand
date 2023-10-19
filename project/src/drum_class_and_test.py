@@ -1,10 +1,11 @@
-import brickpi3
+from utils.brick import Motor, BP
 import time
+
 
 
 class Drum:
     
-    def __init__(self, BP,port, rotation_angle, motor_speed=300,invert_rotation=False, starting_position="up",delay=1):
+    def __init__(self,port, rotation_angle, motor_speed=300,invert_rotation=False, starting_position="up",delay=1):
         
         self.is_stopped     = True
         self.delay          = delay
@@ -21,25 +22,18 @@ class Drum:
         
         
         #Associate motor to the brick pi port
-        MOTOR=None
-        if (port == "A"):
-            MOTOR = BP.PORT_A
-        elif (port == "B"):
-            MOTOR = BP.PORT_B
-        elif (port == "C"):
-            MOTOR = BP.PORT_C
-        elif (port == "D"):
-            MOTOR = BP.PORT_D
-            
-        self.motor=MOTOR
+
+        self.motor=Motor(port)
         
             
         #Set the motor parameters
-        BP.offset_motor_encoder(self.motor, BP.get_motor_encoder(self.motor))
-        BP.set_motor_limits(self.motor, self.power_limit, self.speed_limit)
-        BP.set_motor_power(self.motor, 0)
+        self.motor.offset_encoder(self.motor.get_encoder())
+        self.motor.set_limits(self.power_limit, self.speed_limit)
+        self.motor.set_power(0)
         
-        BP.reset_all()
+        #self.motor.reset_position()
+        #self.motor.reset_encoder()
+        #BP.reset_all()
         time.sleep(self.delay)
         
     def stop(self):
@@ -48,35 +42,46 @@ class Drum:
     def start(self):
         self.is_stopped=False
     
-    def move(self,BP):
+    def move(self):
 
-        BP.set_motor_limits(self.motor, self.power_limit, self.motor_speed)
+        self.motor.set_limits(self.power_limit, self.motor_speed)
         print("position: ", self.position)
         #move up or move down depending on position
         if self.position == "up":
             print("in down")
-            BP.set_motor_position_relative(self.motor, self.rotation_angle)
+            self.motor.set_position_relative(self.rotation_angle)
             self.position="down"  
             
         elif self.position == "down":
             print("in down")
-            BP.set_motor_position_relative(self.motor, -self.rotation_angle)
+            self.motor.set_position_relative(-self.rotation_angle)
             self.position="up"
             
         time.sleep(self.delay)
-        BP.reset_all()
+        #self.motor.reset_position()
+        #self.motor.reset_encoder()
+        #BP.reset_all()
         time.sleep(self.delay)           
   
 
-def drummer():
+def drummer(event, activated):
     print("start drummer")
-    #BP = brickpi3.BrickPi3()
-    drum = Drum(BP,"A", 15, starting_position="down",motor_speed=720,delay=0.1)
-    while True:
-        print(3)
-        drum.move(BP)
-        drum.move(BP)
-        time.sleep(10)
+ 
+    drum = Drum("A", 15, starting_position="down",motor_speed=720,delay=0.1)
+    
+    event.wait()
+    try:
+        
+        while True:
+            print(3)
+            drum.move()
+            drum.move()
+        
+    except BaseException as e:
+        BP.reset_all()
+        print(e)
+        exit()
+        
         
 
 
@@ -84,12 +89,12 @@ def drummer():
 
 def main():
     print("main")
-    BP = brickpi3.BrickPi3()
-    drum = Drum(BP,"A", 15, starting_position="down",motor_speed=720,delay=0.1)
+   
+    drum = Drum("A", 15, starting_position="down",motor_speed=720,delay=0.12)
     
     while(1):
-        drum.move(BP)
-        drum.move(BP)
+        drum.move()
+        drum.move()
  
         
 if __name__ == "__main__":
